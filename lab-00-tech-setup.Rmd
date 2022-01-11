@@ -1,6 +1,6 @@
 ---
 title: "Lab 00 - Tech Setup"
-author: "Lucy D'Agostino McGowan"
+author: "Cindy Chen"
 output: html_document
 ---
 
