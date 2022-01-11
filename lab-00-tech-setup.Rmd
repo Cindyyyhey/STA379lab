@@ -1,7 +1,9 @@
 ---
 title: "Lab 00 - Tech Setup"
 author: "Cindy Chen"
-output: html_document
+output: 
+  html_document: 
+    theme: yeti
 ---
 
 
@@ -10,5 +12,48 @@ library(tidyverse)
 ```
 
 ## Exercise 1
+```{r q1}
+discordant_data <- read_csv(
+  "https://raw.githubusercontent.com/blythejane/covid_safety/c92a4c60a83e67179202fafdf89858c6bafaaa7e/discordant_data.csv"
+)
+```
 
 ## Exercise 2
+```{r q2}
+discordant_data <- discordant_data %>%
+  filter(!is.na(day), !is.na(ct_saliva))
+
+ag_discordant <- discordant_data %>% 
+  filter(antigen == "Negative")
+ag_concordant <- discordant_data %>% 
+  filter(antigen == "Positive")
+ag_missing <- discordant_data %>% 
+  filter(is.na(antigen))
+
+ggplot(discordant_data, aes(day, ct_saliva)) +
+  geom_line(aes(group = case), 
+            alpha = 0.8,
+            size = 0.6,
+            color = "grey55") +
+  geom_point(data = ag_missing, 
+             aes(day, ct_saliva, color = "Not Performed"),
+             size = 1) +
+  geom_point(data = ag_concordant,
+             aes(day, ct_saliva, color = "True Positive"),
+             alpha = 0.5,
+             size = 4) +
+  geom_point(data = ag_discordant, 
+             aes(day, ct_saliva, color = "False Negative"),
+             alpha = 0.5,
+             size = 4) +
+  scale_x_continuous("Days from first positive test",
+                     breaks = c(0, 2, 4, 6, 8, 10)) +
+  scale_y_reverse("Saliva SARS-CoV-2 PCR Ct") +
+  scale_color_manual(values = c("False Negative" = "orangered3", 
+                                "True Positive" = "royalblue",
+                                "Not Performed" = "grey55"),
+                     name = "Nasal Antigen Test") +
+  coord_cartesian(ylim = c(38, 10), xlim = c(0, 10)) + 
+  theme_bw()
+```
+
